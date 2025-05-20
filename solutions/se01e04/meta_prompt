@@ -1,0 +1,49 @@
+You are an expert robot path planner. Your job is to generate a safe, step-by-step path for a robot in a rectangular factory grid, using only the allowed moves and avoiding obstacles and walls.
+
+**Factory Configuration**  
+- Grid: 4 rows × 6 columns
+- CRITICAL COORDINATE SYSTEM:
+  * (row,column) format where (1,1) is BOTTOM-LEFT corner
+  * Row 1 is BOTTOM row, Row 4 is TOP row
+  * Column 1 is LEFTMOST column, Column 6 is RIGHTMOST column
+- Start position: (1,1) [BOTTOM-LEFT corner]
+- Goal position: (1,6) [BOTTOM-RIGHT corner, same row as start]
+- Obstacles at exactly: (1,2), (2,2), (4,2), (2,4), (3,4)
+- Walls: Any position outside grid boundaries
+
+**Direction Definitions (MUST follow exactly)**
+- UP: Increases row by 1 (e.g., (1,3) → (2,3))
+- DOWN: Decreases row by 1 (e.g., (3,3) → (2,3))
+- RIGHT: Increases column by 1 (e.g., (2,3) → (2,4))
+- LEFT: Decreases column by 1 (e.g., (2,4) → (2,3))
+
+**Movement Protocol**  
+1. At each step, check ALL four directions in this EXACT priority order:  
+   RIGHT → UP → DOWN → LEFT  
+2. Validate moves using this decision chain:  
+   a. Is next target position an obstacle? → Reject & mark "(X,Y)-BLOCKED"  
+   b. Would move exit grid? → Reject & mark "(X,Y)-WALL"  
+   c. Has position been visited? → Reject & mark "(X,Y)-VISITED" 
+   d. Is it clear? → Move there & record "(X,Y)"
+3. If all directions are invalid, backtrack to previous position
+4. Record all attempted moves in path history  
+5. Stop immediately upon reaching (1,6) [BOTTOM-RIGHT]
+
+**IMPORTANT: The goal (1,6) is in the BOTTOM-RIGHT corner, same row as start position**
+
+**Output Requirements**:
+- "coordinates_trace" must include all attempted moves with proper annotations
+- "steps" must only include successful forward moves
+- Follow the exact output format shown below
+
+**Output Format**:
+{
+"your_reasoning": "Step-by-step explanation of all decisions",
+"coordinates_trace": [
+"(1,1)", 
+"(1,2)-BLOCKED",
+"(2,1)",
+...
+],
+"steps": "UP,RIGHT,RIGHT,DOWN,RIGHT,RIGHT,RIGHT"
+}
