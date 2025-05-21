@@ -73,7 +73,8 @@
         "notes": "bun run notes/app.ts",
         "se01e01": "bun run solutions/se01e01/se01e01.ts",
         "se01e02": "bun run solutions/se01e02/se01e02.ts",
-        "se01e03": "bun run solutions/se01e03/se01e03.ts"
+        "se01e03": "bun run solutions/se01e03/se01e03.ts",
+        "se01e05": "bun run solutions/se01e05/se01e05.ts"
     },
     "peerDependencies": {
         "typescript": "^5.6.3"

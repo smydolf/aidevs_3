@@ -2,7 +2,7 @@ import express from 'express';
 import fs from 'fs';
 import { evaluate } from 'mathjs';
 import { OpenAIService } from '../Shared/OpenAIService';
-import { LangfuseService } from './LangfuseService';
+import { LangfuseService } from '../Shared/LangfuseService';
 import type { ChatCompletionMessageParam } from 'openai/resources/chat/completions';
 import systemPromptDefinition from "./context/systemPrompt";
 import type OpenAI from 'openai';
