@@ -61,7 +61,6 @@ class DataAnonymizationService {
         );
 
         const anonymized = aiResponse.choices[0].message.content ?? "";
-        console.log("anonymized", anonymized);
         return anonymized;
     }
 

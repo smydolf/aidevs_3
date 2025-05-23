@@ -2,34 +2,43 @@ import OpenAI from "openai";
 import type { ChatCompletionMessageParam } from "openai/resources/chat/completions";
 
 export class OpenAIService {
-  private openai: OpenAI;
+    private openai: OpenAI;
 
-  constructor() {
-    this.openai = new OpenAI();
-  }
-
-  async completion(
-    messages: ChatCompletionMessageParam[],
-    model: string = "gpt-4",
-    stream: boolean = false,
-    jsonMode: boolean = false
-  ): Promise<OpenAI.Chat.Completions.ChatCompletion | AsyncIterable<OpenAI.Chat.Completions.ChatCompletionChunk>> {
-    try {
-      const chatCompletion = await this.openai.chat.completions.create({
-        messages,
-        model,
-        stream,
-        response_format: jsonMode ? { type: "json_object" } : { type: "text" }
-      });
-
-      if (stream) {
-        return chatCompletion as AsyncIterable<OpenAI.Chat.Completions.ChatCompletionChunk>;
-      } else {
-        return chatCompletion as OpenAI.Chat.Completions.ChatCompletion;
-      }
-    } catch (error) {
-      console.error("Error in OpenAI completion:", error);
-      throw error;
+    constructor() {
+        this.openai = new OpenAI();
     }
-  }
+
+    async transcribe(file: Buffer): Promise<string> {
+        const transcription = await this.openai.audio.transcriptions.create({
+            file: new File([file], 'audio.m4a', { type: 'audio/m4a' }),
+            model: "whisper-1"
+        });
+        return transcription.text;
+    }
+    async completion(
+        messages: ChatCompletionMessageParam[],
+        model: string = "gpt-4",
+        stream: boolean = false,
+        jsonMode: boolean = false
+    ): Promise<OpenAI.Chat.Completions.ChatCompletion | AsyncIterable<OpenAI.Chat.Completions.ChatCompletionChunk>> {
+        try {
+            const chatCompletion = await this.openai.chat.completions.create({
+                messages,
+                model,
+                stream,
+                response_format: jsonMode ? { type: "json_object" } : { type: "text" }
+            });
+
+            if (stream) {
+                return chatCompletion as AsyncIterable<OpenAI.Chat.Completions.ChatCompletionChunk>;
+            } else {
+                return chatCompletion as OpenAI.Chat.Completions.ChatCompletion;
+            }
+        } catch (error) {
+            console.error("Error in OpenAI completion:", error);
+            throw error;
+        }
+    }
 }
+
+
