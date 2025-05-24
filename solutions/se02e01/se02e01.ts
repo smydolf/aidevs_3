@@ -84,7 +84,7 @@ app.post('/api/se02e01/find-street', async (req, res) => {
             content: transcription
         }
 
-    ]) as OpenAI.Chat.Completions.ChatCompletion;;
+    ]) as OpenAI.Chat.Completions.ChatCompletion;
 
     const response = answer.choices[0].message.content ?? '';
 

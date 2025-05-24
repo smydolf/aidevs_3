@@ -75,7 +75,8 @@
         "se01e02": "bun run solutions/se01e02/se01e02.ts",
         "se01e03": "bun run solutions/se01e03/se01e03.ts",
         "se01e05": "bun run solutions/se01e05/se01e05.ts",
-        "se02e01": "bun run solutions/se02e01/se02e01.ts"
+        "se02e01": "bun run solutions/se02e01/se02e01.ts",
+        "se02e02": "bun run solutions/se02e02/se02e02.ts"
     },
     "peerDependencies": {
         "typescript": "^5.6.3"

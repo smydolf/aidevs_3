@@ -19,14 +19,18 @@ export class OpenAIService {
         messages: ChatCompletionMessageParam[],
         model: string = "gpt-4",
         stream: boolean = false,
-        jsonMode: boolean = false
+        jsonMode: boolean = false,
+        temperature: number = 0.5,
+        maxTokens: number = 1024
     ): Promise<OpenAI.Chat.Completions.ChatCompletion | AsyncIterable<OpenAI.Chat.Completions.ChatCompletionChunk>> {
         try {
             const chatCompletion = await this.openai.chat.completions.create({
                 messages,
-                model,
+                model: model,
                 stream,
-                response_format: jsonMode ? { type: "json_object" } : { type: "text" }
+                response_format: jsonMode ? { type: "json_object" } : { type: "text" },
+                temperature: temperature,
+                max_tokens: maxTokens
             });
 
             if (stream) {
