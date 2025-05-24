@@ -10,7 +10,6 @@ Analyze 4 map fragment descriptions to identify the most likely Polish city they
 - MUST identify common geographical features across the fragments
 - ALWAYS cross-reference findings with known Polish city characteristics
 - MUST identify inconsistencies between fragments (one fragment is ALWAYS misleading)
-- ABSOLUTELY FORBIDDEN to consider these cities: Krakow, Warsaw, Poznan, Białystok, Lublin, Łódź, Gdańsk, Wrocław, Rzeszów, Toruń, Bydgoszcz, Szczecin, Częstochowa, Radom, Kielce
 - NEVER make up geographical features not mentioned in the provided fragments
 - MUST stick to provided fragment information while using your knowledge of Polish cities for comparison
 - ALWAYS provide city identification in percentage-based list format, even if uncertain
