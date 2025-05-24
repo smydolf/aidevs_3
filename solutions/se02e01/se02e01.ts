@@ -23,8 +23,8 @@ app.post('/api/se02e01/find-street', async (req, res) => {
         return audioFile;
     }
 
-    const transcribeAudioFile = async (audioFile: Buffer) => {
-        const transcription = await openaiService.transcribe(audioFile);
+    const transcribeAudioFile = async (audioFile: Buffer, name: string, type: string) => {
+        const transcription = await openaiService.transcribe(audioFile, name, type);
         return transcription;
     }
 
@@ -43,7 +43,7 @@ app.post('/api/se02e01/find-street', async (req, res) => {
             const transcribedFiles = await Promise.all(audioFiles.map(async (file) => {
                 const audioFile = await loadAudioFile(`${interrogationsDir}/${file}`);
                 console.log(`Transcribing ${file}`);
-                var transcription = await transcribeAudioFile(audioFile);
+                var transcription = await transcribeAudioFile(audioFile, file, 'audio/m4a');
 
                 langfuseService.createGeneration(
                     trace,

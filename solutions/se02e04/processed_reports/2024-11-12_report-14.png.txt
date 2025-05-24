@@ -1,0 +1,1 @@
+Hour 15:45. The update of the communication system of mobile units has been completed. Added the ability to dynamically allocate channels depending on the load and implemented the QII encryption protocol for more secure data exchange. Communication test between units showed full compatibility with the new system. Monitoring is active in real-time mode.

@@ -1,0 +1,7 @@
+REPAIR NOTE
+
+FROM: Repair department
+
+Time 11:50. A malfunction caused by a cable short circuit was detected in the motion sensor. The cause was a small mouse that got between the wires, causing temporary interruptions in sensor operation. The power was disconnected, the foreign object was removed, and the cable covers were secured against further damage. The sensor was recalibrated and checked for proper operation.
+
+APPROVED BY Joseph N.

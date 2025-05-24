@@ -8,9 +8,9 @@ export class OpenAIService {
         this.openai = new OpenAI();
     }
 
-    async transcribe(file: Buffer): Promise<string> {
+    async transcribe(file: Buffer, name: string, type: string): Promise<string> {
         const transcription = await this.openai.audio.transcriptions.create({
-            file: new File([file], 'audio.m4a', { type: 'audio/m4a' }),
+            file: new File([file], name, { type: type }),
             model: "whisper-1"
         });
         return transcription.text;
