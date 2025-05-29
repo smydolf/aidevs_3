@@ -4,13 +4,12 @@ import path from 'path';
 import fs from 'fs/promises';
 import { OpenAIService } from '../Shared/OpenAIService';
 import { LangfuseService } from '../Shared/LangfuseService';
-import type { metastore } from 'googleapis/build/src/apis/metastore';
 
 const app = express();
 const port = 3000;
 
 app.use(express.json());
-app.listen(port, () => console.log(`Server running at http://localhost:${port}. Listening for POST /api/se03e02/reports requests`));
+app.listen(port, () => console.log(`Server running at http://localhost:${port}. Listening for POST /api/se03e02/weapons requests`));
 
 const QUERY = "W raporcie, z którego dnia znajduje się wzmianka o kradzieży prototypu broni?";
 const COLLECTION_NAME = 'se03e02-weapons';
@@ -22,6 +21,7 @@ app.post('/api/se03e02/weapons', async (req, res) => {
     console.log('Received request');
     const trace = langfuseService.createTrace({ id: `se03e02-${Date.now()}`, name: 'se03e02-weapons', sessionId: 'se03e02-weapons' });
 
+    // vector size has to be the same as the embedding model
     qdrantService.ensureCollection({
         name: COLLECTION_NAME,
         vectorSize: 3072,
