@@ -71,14 +71,16 @@
         "map:dev": "vite --config vite.config.map.ts",
         "camera:dev": "vite --config vite.config.camera.ts",
         "notes": "bun run notes/app.ts",
-        "se01e01": "bun run solutions/se01e01/se01e01.ts",
-        "se01e02": "bun run solutions/se01e02/se01e02.ts",
-        "se01e03": "bun run solutions/se01e03/se01e03.ts",
-        "se01e05": "bun run solutions/se01e05/se01e05.ts",
-        "se02e01": "bun run solutions/se02e01/se02e01.ts",
-        "se02e02": "bun run solutions/se02e02/se02e02.ts",
-        "se02e04": "bun run solutions/se02e04/se02e04.ts",
-        "se02e05": "bun run solutions/se02e05/se02e05.ts"
+        "se01e01": "bun run _solutions/se01e01/se01e01.ts",
+        "se01e02": "bun run _solutions/se01e02/se01e02.ts",
+        "se01e03": "bun run _solutions/se01e03/se01e03.ts",
+        "se01e05": "bun run _solutions/se01e05/se01e05.ts",
+        "se02e01": "bun run _solutions/se02e01/se02e01.ts",
+        "se02e02": "bun run _solutions/se02e02/se02e02.ts",
+        "se02e04": "bun run _solutions/se02e04/se02e04.ts",
+        "se02e05": "bun run _solutions/se02e05/se02e05.ts",
+        "se03e01": "bun run _solutions/se03e01/se03e01.ts",
+        "se03e02": "bun run _solutions/se03e02/se03e02.ts"
     },
     "peerDependencies": {
         "typescript": "^5.6.3"

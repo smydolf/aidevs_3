@@ -1,5 +1,6 @@
 import OpenAI from "openai";
 import type { ChatCompletionMessageParam } from "openai/resources/chat/completions";
+import type { CreateEmbeddingResponse } from "openai/resources/embeddings.mjs";
 
 export class OpenAIService {
     private openai: OpenAI;
@@ -40,6 +41,19 @@ export class OpenAIService {
             }
         } catch (error) {
             console.error("Error in OpenAI completion:", error);
+            throw error;
+        }
+    }
+
+    async createEmbedding(text: string): Promise<number[]> {
+        try {
+            const response: CreateEmbeddingResponse = await this.openai.embeddings.create({
+                model: "text-embedding-3-large",
+                input: text,
+            });
+            return response.data[0].embedding;
+        } catch (error) {
+            console.error("Error creating embedding:", error);
             throw error;
         }
     }
