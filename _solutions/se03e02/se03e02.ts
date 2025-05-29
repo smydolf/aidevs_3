@@ -95,7 +95,7 @@ app.post('/api/se03e02/weapons', async (req, res) => {
         const report = {
             task: 'wektory',
             apikey: process.env.PERSONAL_API_KEY,
-            answer : answer.replace(/_/g, '-'),
+            answer: answer.replace(/_/g, '-'),
         }
 
         const response = await fetch('https://c3ntrala.ag3nts.org/report', {
@@ -109,14 +109,14 @@ app.post('/api/se03e02/weapons', async (req, res) => {
         return await response.text();
     }
 
-    // if (!await qdrantService.collectionExists(COLLECTION_NAME)) {
-    //     console.log(`Collection ${COLLECTION_NAME} does not exist, creating it`);
-    //     await createEmbeddings();
-    // } else {
-    //     console.log(`Collection ${COLLECTION_NAME} already exists, skipping creation`);
-    // }
+    if (!await qdrantService.collectionExists(COLLECTION_NAME)) {
+        console.log(`Collection ${COLLECTION_NAME} does not exist, creating it`);
+        await createEmbeddings();
+    } else {
+        console.log(`Collection ${COLLECTION_NAME} already exists, skipping creation. 
+            You can delete it and run the script again to create it again. e.g. curl -X DELETE "http://localhost:6333/collections/se03e02-weapons"`);
+    }
 
-    await createEmbeddings();
     const answer = await findAnswer();
     const headquartersResponse = await sendDataToHeadquarter(answer.createdAt as string);
 
