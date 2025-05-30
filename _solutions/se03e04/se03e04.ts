@@ -6,7 +6,6 @@ import { OpenAIService } from '../Shared/OpenAIService';
 import path from 'path';
 import '../Shared/PolishNormalizer'; // Enable extension method
 
-
 const app = express();
 app.use(express.json());
 
@@ -35,20 +34,39 @@ app.post('/api/se03e04/data-picker', async (req, res) => {
             { role: "user", content: data }
         ], "gpt-4o", false, false) as OpenAI.Chat.Completions.ChatCompletion;
 
+        langfuseService.createGeneration(trace, 'extractPeople', [
+            {
+                role: 'user',
+                content: data
+            }
+        ], names.choices[0].message.content, 'gpt-4o');
+
+
+
         return names.choices[0].message.content;
     }
 
     const extractPlaces = async () => {
         const data = await fs.readFile(path.join(__dirname, 'data/barbara.txt'), 'utf8');
 
+        const systemPrompt = "You are a place extractor. You are given a text and you need to extract all places from the text. " +
+            "Return only comma separated places, nothing else. " +
+            "The response should be in the following format: <place1>, <place2>, <place3>, ..." +
+            "If there are no places in the text, return empty string." +
+            "NEVER return any other text than the places and string with comma."
+
         const places = await openaiService.completion([
-            {
-                role: "system", content: "You are a place extractor. You are given a text and you need to extract all places from the text. " +
-                    "Return only comma separated places, nothing else. " +
-                    "The response should be in the following format: <place1>, <place2>, <place3>, ..."
-            },
+            { role: "system", content: systemPrompt },
             { role: "user", content: data }
         ], "gpt-4o", false, false) as OpenAI.Chat.Completions.ChatCompletion;
+
+        langfuseService.createGeneration(trace, 'extractPlaces', [
+            { role: "system", content: systemPrompt },
+            {
+                role: 'user',
+                content: data
+            }
+        ], places.choices[0].message.content, 'gpt-4o');
 
         return places.choices[0].message.content;
     }
@@ -86,16 +104,25 @@ app.post('/api/se03e04/data-picker', async (req, res) => {
 
         const personData = await personResponse.json();
 
+        const systemPrompt = "You are a city extractor. You are given a text and you need to extract all cities from the text. " +
+            "Return only comma separated cities, nothing else. " +
+            "The response should be in the following format: <city1>, <city2>, <city3>, ..." +
+            "If there are no cities in the text, return empty string." +
+            "NEVER return any other text than the cities and string with comma."
+
         const cities = await openaiService.completion([
             {
-                role: "system", content: "You are a city extractor. You are given a text and you need to extract all cities from the text. " +
-                    "Return only comma separated cities, nothing else. " +
-                    "The response should be in the following format: <city1>, <city2>, <city3>, ..." +
-                    "If there are no cities in the text, return empty string." +
-                    "NEVER return any other text than the cities and string with comma."
+                role: "system", content: systemPrompt
             },
             { role: "user", content: personData.message }
         ], "gpt-4o", false, false) as OpenAI.Chat.Completions.ChatCompletion;
+
+        langfuseService.createGeneration(trace, 'extractCities', [
+            {
+                role: "system", content: systemPrompt
+            },
+            { role: "user", content: personData.message }
+        ], cities.choices[0].message.content, 'gpt-4o');
 
         const response = cities.choices[0].message.content || '';
         console.log({ response });

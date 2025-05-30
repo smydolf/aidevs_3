@@ -81,26 +81,35 @@ app.post('/api/se03e03/sql-query', async (req, res) => {
     }
 
     const generateSqlQuery = async (userSchema: string, dataCenterSchema: string) => {
-        const sqlQuery = await openaiService.completion([
-            {
-                role: "system", content:
-                    "You are a SQL query generator and you generate SQL queries based on the schemas provided by the user. " +
-                    "You can only generate SQL queries that are valid for SQL database. " +
-                    "NEVER generate any other text than the SQL query. The expected output is only the SQL query, nothing else. " +
-                    "The response should be in the following format: " +
-                    "Select <column_name> from <table_name> where <condition>;" +
-                    "Never wrap response in ```sql or ``` or any other text. The response should be only the SQL query." +
-                    "ALWAYS check if properties in your sql query are valid for the schemas provided by the user."
-            },
-            {
-                role: "user", content: `Based on schemas below generate SQL query that will return DC_ID from datacenters table for users that are inactive from table users.
+        const systemPrompt =
+            "You are a SQL query generator and you generate SQL queries based on the schemas provided by the user. " +
+            "You can only generate SQL queries that are valid for SQL database. " +
+            "NEVER generate any other text than the SQL query. The expected output is only the SQL query, nothing else. " +
+            "The response should be in the following format: " +
+            "Select <column_name> from <table_name> where <condition>;" +
+            "Never wrap response in ```sql or ``` or any other text. The response should be only the SQL query." +
+            "ALWAYS check if properties in your sql query are valid for the schemas provided by the user."
+        const userPrompt = `Based on schemas below generate SQL query that will return DC_ID from datacenters table for users that are inactive from table users.
                            Notice that column manager in datacenters table is a foreign key to id column in users table. Use is_active column in users table to check if user is active.
                            Schemas:
                            Users table schema:
                            ${userSchema}
                            Datacenters table schema:
                            ${dataCenterSchema}`
+        const sqlQuery = await openaiService.completion([
+            {
+                role: "system", content: systemPrompt
+            },
+            {
+                role: "user", content: userPrompt
             }], "gpt-4o-mini", false, false) as OpenAI.Chat.Completions.ChatCompletion;;
+
+        langfuseService.createGeneration(trace, 'generateSqlQuery', [
+            {
+                role: "system", content: systemPrompt
+            },
+            { role: "user", content: userPrompt }
+        ], sqlQuery.choices[0].message.content, 'gpt-4o-mini');
 
         console.log(`SQL query: ${sqlQuery.choices[0].message.content}`);
         return sqlQuery.choices[0].message.content;
