@@ -28,7 +28,7 @@ app.post('/api/se03e04/data-picker', async (req, res) => {
             {
                 role: "system", content: "You are a name extractor. You are given a text and you need to extract all names from the text. " +
                     "ALWAYS change the name to nominative case. Return only comma separated names, nothing else. " +
-                    "Get only names (polish ones) without last name. " +
+                    "Get only names (polish ones) without last name or last name when it is mentioned alone (without first name). " +
                     "The response should be in the following format: <name1>, <name2>, <name3>, ..."
             },
             { role: "user", content: data }
@@ -41,8 +41,6 @@ app.post('/api/se03e04/data-picker', async (req, res) => {
             }
         ], names.choices[0].message.content, 'gpt-4o');
 
-
-
         return names.choices[0].message.content;
     }
 
@@ -53,6 +51,7 @@ app.post('/api/se03e04/data-picker', async (req, res) => {
             "Return only comma separated places, nothing else. " +
             "The response should be in the following format: <place1>, <place2>, <place3>, ..." +
             "If there are no places in the text, return empty string." +
+            "Return names in nominative case." +
             "NEVER return any other text than the places and string with comma."
 
         const places = await openaiService.completion([
@@ -68,7 +67,7 @@ app.post('/api/se03e04/data-picker', async (req, res) => {
             }
         ], places.choices[0].message.content, 'gpt-4o');
 
-        return places.choices[0].message.content;
+        return places.choices[0].message.content || '';
     }
 
     const sendDataToHeadquarter = async (answer: string) => {
@@ -86,14 +85,18 @@ app.post('/api/se03e04/data-picker', async (req, res) => {
             body: JSON.stringify(report)
         });
 
-        return await response.text();
+        return await response.json();
     }
 
-    const people = (await extractPeople())?.split(', ') || [];
-    const places = (await extractPlaces())?.split(', ') || [];
+    const people = new Set((await extractPeople())?.split(', ') || []);
+    const places = new Set((await extractPlaces())?.split(', ') || []);
 
+    console.log({ places });
+    console.log({ people });
 
-    for (const person of people) {
+    let i = 0;
+    while (i < people.size) {
+        const person = Array.from(people)[i];
         const personResponse = await fetch(personUrl, {
             method: 'POST',
             body: JSON.stringify({
@@ -103,6 +106,7 @@ app.post('/api/se03e04/data-picker', async (req, res) => {
         });
 
         const personData = await personResponse.json();
+        console.log(`Person ${person}:`, personData);
 
         const systemPrompt = "You are a city extractor. You are given a text and you need to extract all cities from the text. " +
             "Return only comma separated cities, nothing else. " +
@@ -125,37 +129,38 @@ app.post('/api/se03e04/data-picker', async (req, res) => {
         ], cities.choices[0].message.content, 'gpt-4o');
 
         const response = cities.choices[0].message.content || '';
-        console.log({ response });
-        places.push(...response.split(', '));
-    }
-
-    const distinctPlaces = [...new Set(places)];
-
-    const potentialPlaces = [];
-    for (const place of distinctPlaces) {
-        const placeResponse = await fetch(placesUrl, {
-            method: 'POST',
-            body: JSON.stringify({
-                apikey: process.env.PERSONAL_API_KEY,
-                query: place.toUpperCase().normalizePolish()
-            })
-        });
-
-        const placeData = await placeResponse.json();
-
-        console.log({ place, placeData });
-
-        if (placeData.message.includes('BARBARA')) {
-            console.log("Found place: ", place);
-            potentialPlaces.push(place);
+        for (const city of response.toUpperCase().normalizePolish().split(', ')) {
+            if (city !== '' && city !== 'KRAKOW') {
+                places.add(city);
+            }
         }
-    }
 
-    const responses: string[] = [];
-    for (const place of potentialPlaces) {
-        const response = await sendDataToHeadquarter(place);
-        responses.push(response);
-    }
+        for (const place of places) {
+            const placeResponse = await fetch(placesUrl, {
+                method: 'POST',
+                body: JSON.stringify({
+                    apikey: process.env.PERSONAL_API_KEY,
+                    query: place.toUpperCase().normalizePolish()
+                })
+            });
 
-    res.status(200).send({ message: responses.join(', ') });
+            const placeData = await placeResponse.json();
+            const newPeople = placeData.message.toUpperCase().normalizePolish().split(' ');
+            console.log(`Place ${place}:`, placeData);
+            if (placeData.message.includes('BARBARA') && place !== 'KRAKOW') {
+                const response = await sendDataToHeadquarter(place);
+                if (response.code === 0) {
+                    return res.status(200).send({ message: response.message });
+                }
+            }
+            else {
+                for (const newPerson of newPeople) {
+                    if (newPerson !== '' && newPerson.toUpperCase().normalizePolish() !== 'BARBARA') {
+                        people.add(newPerson);
+                    }
+                }
+            }
+        }
+        i++;
+    }
 });
