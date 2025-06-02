@@ -18,7 +18,7 @@ export class OpenAIService {
     }
     async completion(
         messages: ChatCompletionMessageParam[],
-        model: string = "gpt-4",
+        model: string = "gpt-4.1-mini",
         stream: boolean = false,
         jsonMode: boolean = false,
         temperature: number = 0.5,

@@ -27,6 +27,7 @@ app.post('/api/se03e01/reports', async (req, res) => {
                 The key facts are: people, places, events, occupations, names of people, etc.
                 Return the key facts in a structured format which is comma separated list of facts.
                 It has to be in Polish.
+                It has to be in nominative case.
             `;
 
             const userPrompt = `
@@ -49,7 +50,7 @@ app.post('/api/se03e01/reports', async (req, res) => {
                     { role: 'user', content: userPrompt }
                 ],
                 contentResponse,
-                'gpt-4o'
+                'gpt-4.1-mini'
             );
 
             return {
@@ -109,19 +110,16 @@ app.post('/api/se03e01/reports', async (req, res) => {
                     { role: 'user', content: userPrompt }
                 ],
                 contentResponse,
-                'gpt-4o'
+                'gpt-4.1-mini'
             );
 
-            return {
-                report,
-                keyWords: contentResponse
-            };
+            return contentResponse
         }
 
-        const allFacts = (await fs.readdir(path.join(__dirname, 'reports', 'facts'))).filter(file => file.endsWith('.txt'));
+        const allFacts = (await fs.readdir(path.join(__dirname, 'reports', 'facts', 'analyzed'))).filter(file => file.endsWith('.txt'));
         const factsContent = await Promise.all(allFacts.map(async fact => ({
             fact: fact,
-            content: await fs.readFile(path.join(__dirname, 'reports', 'facts', fact), 'utf8')
+            content: await fs.readFile(path.join(__dirname, 'reports', 'facts', 'analyzed', fact), 'utf8')
         })));
 
         const reports = (await fs.readdir(path.join(__dirname, 'reports'))).filter(file => file.endsWith('.txt'));
@@ -129,9 +127,11 @@ app.post('/api/se03e01/reports', async (req, res) => {
         const keyWordsForReports = [];
         for (const report of reports) {
             const keyWords = await keyWordsForReport(report, factsContent);
-            keyWordsForReports.push(keyWords);
+            keyWordsForReports.push({
+                report,
+                keyWords: keyWords
+            });
         }
-
 
         return keyWordsForReports;
     }
@@ -162,7 +162,7 @@ app.post('/api/se03e01/reports', async (req, res) => {
         return await headquartersResponse.text();
     }
 
-    //await analyzeFacts();
+    await analyzeFacts();
     const dataForReports = await analyzeReports();
     const headquartersResponse = await sendDataToHeadquarter(dataForReports);
 
