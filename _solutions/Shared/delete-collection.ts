@@ -6,7 +6,7 @@ async function deleteCollection() {
 
     try {
         console.log(`Checking if collection '${collectionName}' exists...`);
-        
+
         const exists = await qdrant.collectionExists(collectionName);
         if (!exists) {
             console.log(`❌ Collection '${collectionName}' does not exist`);
@@ -14,16 +14,16 @@ async function deleteCollection() {
         }
 
         console.log(`✅ Collection '${collectionName}' exists`);
-        
+
         // Get info before deletion
         const info = await qdrant.getCollectionInfo(collectionName);
         console.log(`Collection has ${info.points_count} points`);
-        
+
         console.log(`Deleting collection '${collectionName}'...`);
         await qdrant.deleteCollection(collectionName);
-        
+
         console.log(`✅ Collection '${collectionName}' deleted successfully`);
-        
+
         // Verify deletion
         const stillExists = await qdrant.collectionExists(collectionName);
         if (!stillExists) {

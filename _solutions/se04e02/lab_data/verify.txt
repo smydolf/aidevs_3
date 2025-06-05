@@ -1,0 +1,21 @@
+01=kanto,saka,brunn n
+02=kezka,barru,asal n
+03=dwylo,blodau,cerdd ok
+04=kutsu,gato,madarak n
+05=enamorar,bertan,tycio n
+06=ezkutatu,rejt,ocultar n
+07=selymes,sedoso,silkkinen n
+08=kynsien,varvas,hiusten ok
+09=saudade,honvágy,kaipaus n
+10=masnach,lledr,meddyg ok
+
+kanto,saka,brunn
+kezka,barru,asal
+dwylo,blodau,cerdd
+kutsu,gato,madarak
+enamorar,bertan,tycio
+ezkutatu,rejt,ocultar
+selymes,sedoso,silkkinen
+kynsien,varvas,hiusten
+saudade,honvágy,kaipaus
+masnach,lledr,meddyg
